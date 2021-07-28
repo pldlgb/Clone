@@ -382,7 +382,7 @@ class Corpus:
 
                 if(batch_indices[i, 0] not in unique_entities or batch_indices[i, 2] not in unique_entities):
                     continue
-
+                ## replace head and tail
                 new_x_batch_head[:, 0] = entity_list
                 new_x_batch_tail[:, 2] = entity_list
 
@@ -413,6 +413,7 @@ class Corpus:
                 new_x_batch_tail = np.insert(
                     new_x_batch_tail, 0, batch_indices[i], axis=0)
 
+                ### !!! -----get rank------ !!!
                 import math
                 # Have to do this, because it doesn't fit in memory
 
@@ -428,23 +429,10 @@ class Corpus:
                         new_x_batch_head[2 * num_triples_each_shot: 3 * num_triples_each_shot, :]).cuda())
                     scores4_head = model.batch_test(torch.LongTensor(
                         new_x_batch_head[3 * num_triples_each_shot: 4 * num_triples_each_shot, :]).cuda())
-                    # scores5_head = model.batch_test(torch.LongTensor(
-                    #     new_x_batch_head[4 * num_triples_each_shot: 5 * num_triples_each_shot, :]).cuda())
-                    # scores6_head = model.batch_test(torch.LongTensor(
-                    #     new_x_batch_head[5 * num_triples_each_shot: 6 * num_triples_each_shot, :]).cuda())
-                    # scores7_head = model.batch_test(torch.LongTensor(
-                    #     new_x_batch_head[6 * num_triples_each_shot: 7 * num_triples_each_shot, :]).cuda())
-                    # scores8_head = model.batch_test(torch.LongTensor(
-                    #     new_x_batch_head[7 * num_triples_each_shot: 8 * num_triples_each_shot, :]).cuda())
-                    # scores9_head = model.batch_test(torch.LongTensor(
-                    #     new_x_batch_head[8 * num_triples_each_shot: 9 * num_triples_each_shot, :]).cuda())
-                    # scores10_head = model.batch_test(torch.LongTensor(
-                    #     new_x_batch_head[9 * num_triples_each_shot:, :]).cuda())
-
+                    # water 
+                    # scores_head = model.batch_test(new_x_batch_head)
                     scores_head = torch.cat(
                         [scores1_head, scores2_head, scores3_head, scores4_head], dim=0)
-                    #scores5_head, scores6_head, scores7_head, scores8_head,
-                    # cores9_head, scores10_head], dim=0)
                 else:
                     scores_head = model.batch_test(new_x_batch_head)
 
@@ -469,23 +457,9 @@ class Corpus:
                         new_x_batch_tail[2 * num_triples_each_shot: 3 * num_triples_each_shot, :]).cuda())
                     scores4_tail = model.batch_test(torch.LongTensor(
                         new_x_batch_tail[3 * num_triples_each_shot: 4 * num_triples_each_shot, :]).cuda())
-                    # scores5_tail = model.batch_test(torch.LongTensor(
-                    #     new_x_batch_tail[4 * num_triples_each_shot: 5 * num_triples_each_shot, :]).cuda())
-                    # scores6_tail = model.batch_test(torch.LongTensor(
-                    #     new_x_batch_tail[5 * num_triples_each_shot: 6 * num_triples_each_shot, :]).cuda())
-                    # scores7_tail = model.batch_test(torch.LongTensor(
-                    #     new_x_batch_tail[6 * num_triples_each_shot: 7 * num_triples_each_shot, :]).cuda())
-                    # scores8_tail = model.batch_test(torch.LongTensor(
-                    #     new_x_batch_tail[7 * num_triples_each_shot: 8 * num_triples_each_shot, :]).cuda())
-                    # scores9_tail = model.batch_test(torch.LongTensor(
-                    #     new_x_batch_tail[8 * num_triples_each_shot: 9 * num_triples_each_shot, :]).cuda())
-                    # scores10_tail = model.batch_test(torch.LongTensor(
-                    #     new_x_batch_tail[9 * num_triples_each_shot:, :]).cuda())
 
                     scores_tail = torch.cat(
                         [scores1_tail, scores2_tail, scores3_tail, scores4_tail], dim=0)
-                    #     scores5_tail, scores6_tail, scores7_tail, scores8_tail,
-                    #     scores9_tail, scores10_tail], dim=0)
 
                 else:
                     scores_tail = model.batch_test(new_x_batch_tail)

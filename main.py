@@ -1,5 +1,5 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"]='5'
+os.environ["CUDA_VISIBLE_DEVICES"]='0'
 import pickle
 from copy import deepcopy
 
