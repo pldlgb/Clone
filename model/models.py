@@ -46,6 +46,7 @@ class SpGAT(nn.Module):
 
     def forward(self, Corpus_, batch_inputs, entity_embeddings, relation_embed,
                 edge_list, edge_type, edge_embed, edge_list_nhop, edge_type_nhop):
+
         x = entity_embeddings
 
         edge_embed_nhop = relation_embed[
@@ -110,7 +111,10 @@ class SpKBGATModified(nn.Module):
             size=(self.entity_in_dim, self.entity_out_dim_1 * self.nheads_GAT_1)))
         nn.init.xavier_uniform_(self.W_entities.data, gain=1.414)
 
-    def forward(self, Corpus_, adj, batch_inputs, train_indices_nhop):
+    def forward(self, Corpus_, adj, batch_inputs, train_indices_nhop,ent_conv=None,rel_conv=None):
+        if ent_conv!=None and rel_conv!=None:
+            self.entity_embeddings = nn.Parameter(F.normalize((self.entity_embeddings+ent_conv)))
+            self.relation_embeddings = nn.Parameter(F.normalize((self.relation_embeddings+rel_conv)))
         # getting edge list
         edge_list = adj[0]
         edge_type = adj[1]
@@ -158,7 +162,7 @@ class SpKBGATModified(nn.Module):
 
 class SpKBGATConvOnly(nn.Module):
     def __init__(self, initial_entity_emb, initial_relation_emb, entity_out_dim, relation_out_dim,
-                 drop_GAT, drop_conv, alpha, alpha_conv, nheads_GAT, conv_out_channels):
+                drop_conv, alpha_conv, nheads_GAT, conv_out_channels):
         '''Sparse version of KBGAT
         entity_in_dim -> Entity Input Embedding dimensions
         entity_out_dim  -> Entity Output Embedding dimensions, passed as a list
@@ -181,9 +185,9 @@ class SpKBGATConvOnly(nn.Module):
         self.relation_dim = initial_relation_emb.shape[1]
         self.relation_out_dim_1 = relation_out_dim[0]
 
-        self.drop_GAT = drop_GAT
+        # self.drop_GAT = drop_GAT
         self.drop_conv = drop_conv
-        self.alpha = alpha      # For leaky relu
+        # self.alpha = alpha      # For leaky relu
         self.alpha_conv = alpha_conv
         self.conv_out_channels = conv_out_channels
 
@@ -196,7 +200,13 @@ class SpKBGATConvOnly(nn.Module):
         self.convKB = ConvKB(self.entity_out_dim_1 * self.nheads_GAT_1, 3, 1,
                              self.conv_out_channels, self.drop_conv, self.alpha_conv)
 
-    def forward(self, Corpus_, adj, batch_inputs):
+    def forward(self, batch_inputs, ent_gat=None,rel_gat=None):
+        # if ent_gat!=None and rel_gat!=None:
+        #     self.final_entity_embeddings = nn.Parameter(F.normalize((self.final_entity_embeddings+ent_gat)))
+        #     self.final_relation_embeddings = nn.Parameter(F.normalize((self.final_relation_embeddings+rel_gat)))
+        # else:
+        #     self.final_entity_embeddings = nn.Parameter(F.normalize(self.final_entity_embeddings))
+        #     self.final_relation_embeddings = nn.Parameter(F.normalize(self.final_relation_embeddings))
         conv_input = torch.cat((self.final_entity_embeddings[batch_inputs[:, 0], :].unsqueeze(1), self.final_relation_embeddings[
             batch_inputs[:, 1]].unsqueeze(1), self.final_entity_embeddings[batch_inputs[:, 2], :].unsqueeze(1)), dim=1)
         out_conv = self.convKB(conv_input)

@@ -17,8 +17,8 @@ def train_conv(args, Corpus, entity_embeddings, relation_embeddings):
                                 args.drop_GAT, args.alpha, args.nheads_GAT)
     print("Only Conv model trained")
     model_conv = SpKBGATConvOnly(entity_embeddings, relation_embeddings, args.entity_out_dim, args.entity_out_dim,
-                                 args.drop_GAT, args.drop_conv, args.alpha, args.alpha_conv,
-                                 args.nheads_GAT, args.out_channels)
+                                args.drop_conv, args.alpha_conv,
+                                args.nheads_GAT, args.out_channels)
     # water
     # model_conv.load_state_dict(torch.load(
     #     '{0}conv/{1}.pth'.format(args.output_folder, 99)), strict=False)
@@ -27,10 +27,10 @@ def train_conv(args, Corpus, entity_embeddings, relation_embeddings):
         model_conv.cuda()
         model_gat.cuda()
 
-    # model_gat.load_state_dict(torch.load(
-    #     '{}/trained_{}.pth'.format(args.output_folder, args.epochs_gat - 1)), strict=False)
-    # model_conv.final_entity_embeddings = model_gat.final_entity_embeddings
-    # model_conv.final_relation_embeddings = model_gat.final_relation_embeddings
+    model_gat.load_state_dict(torch.load(
+        '{}/trained_{}.pth'.format(args.output_folder, args.epochs_gat - 1)), strict=False)
+    model_conv.final_entity_embeddings = model_gat.final_entity_embeddings
+    model_conv.final_relation_embeddings = model_gat.final_relation_embeddings
     # water
 
     Corpus.batch_size = args.batch_size_conv
@@ -77,9 +77,9 @@ def train_conv(args, Corpus, entity_embeddings, relation_embeddings):
                 train_indices = Variable(torch.LongTensor(train_indices))
                 train_values = Variable(torch.FloatTensor(train_values))
 
-            preds = model_conv(
-                Corpus, Corpus.train_adj_matrix, train_indices)
-
+            # preds = model_conv(
+            #     Corpus, Corpus.train_adj_matrix, train_indices)
+            preds = model_conv(train_indices)
             optimizer.zero_grad()
 
             loss = margin_loss(preds.view(-1), train_values.view(-1))

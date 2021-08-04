@@ -7,17 +7,17 @@ def parse_args():
     args.add_argument("-data", "--data",
                       default="./data/WN18RR", help="data directory")
     args.add_argument("-e_g", "--epochs_gat", type=int,
-                      default=500, help="Number of epochs")
+                      default=3600, help="Number of epochs")
     args.add_argument("-e_c", "--epochs_conv", type=int,
-                      default=20, help="Number of epochs")
+                      default=200, help="Number of epochs")
     args.add_argument("-w_gat", "--weight_decay_gat", type=float,
                       default=5e-6, help="L2 reglarization for gat")
     args.add_argument("-w_conv", "--weight_decay_conv", type=float,
                       default=1e-5, help="L2 reglarization for conv")
     args.add_argument("-pre_emb", "--pretrained_emb", type=bool,
-                      default=True, help="Use pretrained embeddings")
+                      default=False, help="Use pretrained embeddings")
     args.add_argument("-emb_size", "--embedding_size", type=int,
-                      default=50, help="Size of embeddings (if pretrained not used)")
+                      default=200, help="Size of embeddings (if pretrained not used)")
     args.add_argument("-l", "--lr", type=float, default=1e-3)
     args.add_argument("-g2hop", "--get_2hop", type=bool, default=False)
     args.add_argument("-u2hop", "--use_2hop", type=bool, default=False)
@@ -36,6 +36,8 @@ def parse_args():
                       default=0.2, help="LeakyRelu alphs for SpGAT layer")
     args.add_argument("-out_dim", "--entity_out_dim", type=int, nargs='+',
                       default=[100, 200], help="Entity output embedding dimensions")
+    args.add_argument("--relation_out_dim", type=int, nargs='+',
+                      default=[100, 200], help="relation output embedding dimensions")
     args.add_argument("-h_gat", "--nheads_GAT", type=int, nargs='+',
                       default=[2, 2], help="Multihead attention SpGAT")
     args.add_argument("-margin", "--margin", type=float,
