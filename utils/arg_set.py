@@ -5,11 +5,11 @@ def parse_args():
     args = argparse.ArgumentParser()
     # network arguments
     args.add_argument("-data", "--data",
-                      default="./data/WN18RR", help="data directory")
+                      default="./data/WN18RR_", help="data directory")
     args.add_argument("-e_g", "--epochs_gat", type=int,
-                      default=3600, help="Number of epochs")
+                      default=1000, help="Number of epochs")
     args.add_argument("-e_c", "--epochs_conv", type=int,
-                      default=200, help="Number of epochs")
+                      default=100, help="Number of epochs")
     args.add_argument("-w_gat", "--weight_decay_gat", type=float,
                       default=5e-6, help="L2 reglarization for gat")
     args.add_argument("-w_conv", "--weight_decay_conv", type=float,
@@ -17,13 +17,13 @@ def parse_args():
     args.add_argument("-pre_emb", "--pretrained_emb", type=bool,
                       default=False, help="Use pretrained embeddings")
     args.add_argument("-emb_size", "--embedding_size", type=int,
-                      default=200, help="Size of embeddings (if pretrained not used)")
+                      default=50, help="Size of embeddings (if pretrained not used)")
     args.add_argument("-l", "--lr", type=float, default=1e-3)
     args.add_argument("-g2hop", "--get_2hop", type=bool, default=False)
     args.add_argument("-u2hop", "--use_2hop", type=bool, default=False)
     args.add_argument("-p2hop", "--partial_2hop", type=bool, default=False)
     args.add_argument("-outfolder", "--output_folder",
-                      default="./checkpoints/wn/out/", help="Folder name to save the models.")
+                      default="./checkpoints/wn_/out/", help="Folder name to save the models.")
 
     # arguments for GAT
     args.add_argument("-b_gat", "--batch_size_gat", type=int,
